@@ -1,0 +1,16 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: tax-mcp-server
+  main:
+    banner-mode: off
+  ai:
+    mcp:
+      server:
+        enabled: true
+        name: tax-tools
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE

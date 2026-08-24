@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: openlifeops-api
+  profiles:
+    active: in-memory
+  ai:
+    mcp:
+      client:
+        enabled: false
+      server:
+        enabled: false
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/openlifeops
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB

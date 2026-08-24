@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.openlifeops</groupId>
+    <artifactId>openlifeops-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>OpenLifeOps</name>
+    <description>Open operating system for AI-powered life workflows</description>
+
+    <modules>
+        <module>openlifeops-core</module>
+        <module>openlifeops-mcp</module>
+        <module>openlifeops-governance</module>
+        <module>openlifeops-evidence</module>
+        <module>openlifeops-knowledge</module>
+        <module>openlifeops-memory</module>
+        <module>openlifeops-runtime</module>
+        <module>openlifeops-orchestrator</module>
+        <module>openlifeops-packs</module>
+        <module>openlifeops-tax-mcp-server</module>
+        <module>openlifeops-api</module>
+    </modules>
+
+    <properties>
+        <!-- Bytecode target: JDK 21+. Build and run on JDK 21 or 25. -->
+        <java.version>21</java.version>
+        <pdfbox.version>3.0.8</pdfbox.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>2.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-mcp</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-governance</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-evidence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-knowledge</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-memory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-runtime</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-orchestrator</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-packs-tax</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-tax-mcp-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <release>${java.version}</release>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

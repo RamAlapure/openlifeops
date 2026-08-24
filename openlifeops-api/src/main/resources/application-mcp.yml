@@ -1,0 +1,20 @@
+spring:
+  ai:
+    mcp:
+      client:
+        enabled: true
+        type: SYNC
+        toolcallback:
+          enabled: true
+        streamable-http:
+          connections:
+            tax-tools:
+              url: http://localhost:8090
+              endpoint: /mcp
+      server:
+        enabled: false
+
+openlifeops:
+  mcp:
+    server-connections:
+      tax-tools: tax-tools
