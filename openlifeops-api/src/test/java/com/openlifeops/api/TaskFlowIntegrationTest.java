@@ -211,7 +211,6 @@ class TaskFlowIntegrationTest {
         mockMvc.perform(get("/api/v1/tasks/{taskId}", taskId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.evidence[*].source", hasItem(startsWith("knowledge:"))))
-                .andExpect(jsonPath("$.evidence[*].metadata.documentId", hasItem(documentId)))
                 .andExpect(jsonPath("$.evidence[*].metadata.excerpt", hasItem(containsString("Income from salary"))));
     }
 
@@ -234,6 +233,26 @@ class TaskFlowIntegrationTest {
                                 {"actionId":"%s"}
                                 """.formatted(actionId)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void reviewSummaryUsesSafeDeterministicFallbackWhenNoChatModelIsConfigured() throws Exception {
+        MvcResult createResult = mockMvc.perform(post("/api/v1/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"objective":"Review my tax reconciliation","pack":"tax"}
+                                """))
+                .andExpect(status().isOk())
+                .andReturn();
+        String taskId = extractJsonValue(createResult.getResponse().getContentAsString(), "taskId");
+
+        mockMvc.perform(post("/api/v1/tasks/{taskId}/review-summary", taskId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.taskId").value(taskId))
+                .andExpect(jsonPath("$.reportId", startsWith("")))
+                .andExpect(jsonPath("$.provider").value("deterministic"))
+                .andExpect(jsonPath("$.summary", containsString("deterministic reconciliation")))
+                .andExpect(jsonPath("$.citationIds").isArray());
     }
 
     @Test

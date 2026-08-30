@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOps - Task Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-button:hover {
+            text-decoration: underline;
+        }
+        
+        .task-detail {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .task-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .task-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-in-progress {
+            background: #3498db;
+            color: white;
+        }
+        
+        .status-awaiting-approval {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .status-completed {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .task-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .meta-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .meta-value {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .task-description {
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .steps-list {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .step-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .step-item.completed {
+            border-left-color: #27ae60;
+            background: #e8f5e9;
+        }
+        
+        .step-item.pending {
+            border-left-color: #f39c12;
+        }
+        
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .step-status {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .step-status.completed {
+            color: #27ae60;
+        }
+        
+        .step-status.pending {
+            color: #f39c12;
+        }
+        
+        .step-description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .actions-bar {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .document-section {
+            margin-top: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .upload-area:hover {
+            border-color: #3498db;
+        }
+        
+        .document-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .document-item {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>OpenLifeOps</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <a href="/" class="back-button">← Back to Tasks</a>
+        
+        <div id="error-container"></div>
+        <div id="loading-container" class="loading">Loading task details...</div>
+        <div id="task-container"></div>
+    </div>
+    
+    <script>
+        const API_BASE = '/api/v1';
+        const taskId = new URLSearchParams(window.location.search).get('id');
+        
+        // Mock task data for prototype UI demonstration
+        const mockTask = {
+            id: taskId || 'task-1',
+            title: 'Reconcile tax documents',
+            description: 'Process Form 16 and bank statement reconciliation to identify any mismatches between TDS deducted and actual income.',
+            packId: 'tax',
+            status: 'AWAITING_APPROVAL',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            steps: [
+                {
+                    id: 'step-1',
+                    title: 'Extract Form 16 data',
+                    description: 'Extract TDS information from Form 16 document',
+                    status: 'COMPLETED'
+                },
+                {
+                    id: 'step-2', 
+                    title: 'Extract bank statement data',
+                    description: 'Extract income information from bank statement',
+                    status: 'COMPLETED'
+                },
+                {
+                    id: 'step-3',
+                    title: 'Reconcile and generate report',
+                    description: 'Compare TDS and income data, generate mismatch report',
+                    status: 'COMPLETED'
+                }
+            ],
+            documents: [
+                {
+                    name: 'form16-fy2025.txt',
+                    uploadedAt: new Date().toISOString()
+                },
+                {
+                    name: 'bank-statement.txt',
+                    uploadedAt: new Date().toISOString()
+                }
+            ]
+        };
+        
+        async function fetchTaskDetails() {
+            // For prototype, return mock data
+            // In production, this would call the actual API
+            return mockTask;
+        }
+        
+        function renderTask(task) {
+            const container = document.getElementById('task-container');
+            const loading = document.getElementById('loading-container');
+            
+            loading.style.display = 'none';
+            
+            if (!task) {
+                container.innerHTML = '<div class="error">Task not found</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="task-detail">
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title || 'Untitled Task'}</div>
+                            <div class="task-description">${task.description || 'No description'}</div>
+                        </div>
+                        <span class="task-status status-${getStatusClass(task.status)}">${task.status}</span>
+                    </div>
+                    
+                    <div class="task-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Task ID</span>
+                            <span class="meta-value">${task.id}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Pack ID</span>
+                            <span class="meta-value">${task.packId || 'N/A'}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Created</span>
+                            <span class="meta-value">${formatDate(task.createdAt)}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Updated</span>
+                            <span class="meta-value">${formatDate(task.updatedAt)}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">Execution Steps</div>
+                    <div class="steps-list">
+                        ${renderSteps(task.steps || [])}
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-title">Documents</div>
+                        <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                            <p>Click to upload documents (PDF, TXT)</p>
+                            <input type="file" id="file-input" accept=".pdf,.txt" style="display: none" onchange="handleFileUpload(event)">
+                        </div>
+                        <div class="document-list" id="document-list">
+                            ${renderDocuments(task.documents || [])}
+                        </div>
+                    </div>
+                    
+                    ${task.status === 'AWAITING_APPROVAL' ? `
+                        <div class="actions-bar">
+                            <button class="btn btn-success" onclick="approveTask()">Approve Task</button>
+                            <button class="btn btn-danger" onclick="rejectTask()">Reject Task</button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+        
+        function renderSteps(steps) {
+            if (steps.length === 0) {
+                return '<p>No steps defined</p>';
+            }
+            
+            return steps.map(step => `
+                <div class="step-item ${step.status === 'COMPLETED' ? 'completed' : 'pending'}">
+                    <div class="step-header">
+                        <div class="step-title">${step.title || 'Step ' + step.id}</div>
+                        <span class="step-status ${step.status === 'COMPLETED' ? 'completed' : 'pending'}">${step.status}</span>
+                    </div>
+                    <div class="step-description">${step.description || ''}</div>
+                </div>
+            `).join('');
+        }
+        
+        function renderDocuments(documents) {
+            if (documents.length === 0) {
+                return '<p>No documents uploaded</p>';
+            }
+            
+            return documents.map(doc => `
+                <div class="document-item">
+                    <span>${doc.name || 'Unknown Document'}</span>
+                    <span>${formatDate(doc.uploadedAt)}</span>
+                </div>
+            `).join('');
+        }
+        
+        function getStatusClass(status) {
+            return status.toLowerCase().replace('_', '-');
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleString();
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        async function approveTask() {
+            try {
+                // For prototype, just update the mock data
+                mockTask.status = 'COMPLETED';
+                refreshTask();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        async function rejectTask() {
+            try {
+                // For prototype, just update the mock data
+                mockTask.status = 'PENDING';
+                refreshTask();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // For prototype, just add to mock documents
+            mockTask.documents.push({
+                name: file.name,
+                uploadedAt: new Date().toISOString()
+            });
+            refreshTask();
+        }
+        
+        async function refreshTask() {
+            const loading = document.getElementById('loading-container');
+            loading.style.display = 'block';
+            const task = await fetchTaskDetails();
+            renderTask(task);
+        }
+        
+        // Initial load
+        if (taskId) {
+            fetchTaskDetails().then(renderTask);
+        } else {
+            document.getElementById('loading-container').innerHTML = '<div class="error">No task ID provided</div>';
+        }
+    </script>
+</body>
+</html>

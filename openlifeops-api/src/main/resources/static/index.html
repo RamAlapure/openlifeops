@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenLifeOps - Task Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        header h1 {
+            text-align: center;
+            font-size: 2rem;
+        }
+        
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .toolbar h2 {
+            color: #2c3e50;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #229954;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+        
+        .task-list {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .task-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .task-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .task-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .status-in-progress {
+            background: #3498db;
+            color: white;
+        }
+        
+        .status-awaiting-approval {
+            background: #9b59b6;
+            color: white;
+        }
+        
+        .status-completed {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .task-meta {
+            display: flex;
+            gap: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .task-description {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>OpenLifeOps</h1>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="toolbar">
+            <h2>Tasks</h2>
+            <div>
+                <button class="btn btn-primary" onclick="refreshTasks()">Refresh</button>
+                <button class="btn btn-success" onclick="createTask()">Create Task</button>
+            </div>
+        </div>
+        
+        <div id="error-container"></div>
+        <div id="loading-container" class="loading">Loading tasks...</div>
+        <div id="tasks-container" class="task-list"></div>
+    </div>
+    
+    <script>
+        const API_BASE = '/api/v1';
+        
+        // Mock task data for prototype UI demonstration
+        const mockTasks = [
+            {
+                id: 'task-1',
+                title: 'Reconcile tax documents',
+                description: 'Process Form 16 and bank statement reconciliation',
+                packId: 'tax',
+                status: 'COMPLETED',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 'task-2', 
+                title: 'Review tax reconciliation',
+                description: 'Review and approve the tax reconciliation results',
+                packId: 'tax',
+                status: 'AWAITING_APPROVAL',
+                createdAt: new Date().toISOString()
+            }
+        ];
+        
+        async function fetchTasks() {
+            // For prototype, return mock data
+            // In production, this would call the actual API
+            return mockTasks;
+        }
+        
+        function renderTasks(tasks) {
+            const container = document.getElementById('tasks-container');
+            const loading = document.getElementById('loading-container');
+            
+            loading.style.display = 'none';
+            
+            if (tasks.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No tasks found</h3>
+                        <p>Create your first task to get started</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = tasks.map(task => `
+                <div class="task-card">
+                    <div class="task-header">
+                        <div class="task-title">${task.title || 'Untitled Task'}</div>
+                        <span class="task-status status-${getStatusClass(task.status)}">${task.status}</span>
+                    </div>
+                    <div class="task-meta">
+                        <span>ID: ${task.id}</span>
+                        <span>Pack: ${task.packId || 'N/A'}</span>
+                        <span>Created: ${formatDate(task.createdAt)}</span>
+                    </div>
+                    <div class="task-description">${task.description || 'No description'}</div>
+                    <div class="task-actions">
+                        <button class="btn btn-primary" onclick="viewTask('${task.id}')">View Details</button>
+                        ${task.status === 'AWAITING_APPROVAL' ? 
+                            `<button class="btn btn-success" onclick="approveTask('${task.id}')">Approve</button>
+                             <button class="btn btn-danger" onclick="rejectTask('${task.id}')">Reject</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getStatusClass(status) {
+            return status.toLowerCase().replace('_', '-');
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            return new Date(dateString).toLocaleString();
+        }
+        
+        function showError(message) {
+            const container = document.getElementById('error-container');
+            container.innerHTML = `<div class="error">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+        
+        async function refreshTasks() {
+            const loading = document.getElementById('loading-container');
+            loading.style.display = 'block';
+            const tasks = await fetchTasks();
+            renderTasks(tasks);
+        }
+        
+        function createTask() {
+            // For prototype, redirect to task creation or show modal
+            alert('Task creation will be implemented in a future update');
+        }
+        
+        function viewTask(taskId) {
+            window.location.href = `/task.html?id=${taskId}`;
+        }
+        
+        async function approveTask(taskId) {
+            try {
+                // For prototype, just update the mock data
+                const task = mockTasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = 'COMPLETED';
+                    refreshTasks();
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        async function rejectTask(taskId) {
+            try {
+                // For prototype, just update the mock data
+                const task = mockTasks.find(t => t.id === taskId);
+                if (task) {
+                    task.status = 'PENDING';
+                    refreshTasks();
+                }
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+        
+        // Initial load
+        refreshTasks();
+    </script>
+</body>
+</html>

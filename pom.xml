@@ -29,6 +29,7 @@
         <module>openlifeops-runtime</module>
         <module>openlifeops-orchestrator</module>
         <module>openlifeops-packs</module>
+        <module>openlifeops-ai</module>
         <module>openlifeops-tax-mcp-server</module>
         <module>openlifeops-api</module>
     </modules>
@@ -93,6 +94,11 @@
             <dependency>
                 <groupId>com.openlifeops</groupId>
                 <artifactId>openlifeops-packs-tax</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openlifeops</groupId>
+                <artifactId>openlifeops-ai</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

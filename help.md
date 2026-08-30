@@ -209,6 +209,20 @@ Create the task as usual, then use `GET /api/v1/tasks/{taskId}`. The **Reconcile
 }
 ```
 
+---
+
+## 3.4 Phase 8 - optional AI-assisted review
+
+The default `in-memory` profile has no model provider configured, so this endpoint returns a safe deterministic review summary. It does not call tools, change evidence, change report status, or approve the task:
+
+```powershell
+curl.exe -s -X POST "http://localhost:8080/api/v1/tasks/{taskId}/review-summary"
+```
+
+The response includes `provider: "deterministic"`. When a Spring AI model provider is configured, the response provider becomes `spring-ai`; the model receives only the deterministic report and its allowed citation identifiers. Any returned citation not present in the report evidence is removed before the response is returned.
+
+No AI provider credentials or model are enabled by default. Persistence remains in-memory.
+
 Its metadata holds citations for every source document/chunk. Approval only submits this internal report to the **OpenLifeOps Tax Review Queue**; it does not file anything with a government portal. See [PHASE-6-TAX-RECONCILIATION.md](PHASE-6-TAX-RECONCILIATION.md).
 
 ---

@@ -10,6 +10,7 @@ public final class DocumentChunk {
     private final int index;
     private final String content;
     private final String excerpt;
+    private final float[] embedding; // Optional vector embedding for semantic search
 
     public DocumentChunk(
             String id,
@@ -18,12 +19,24 @@ public final class DocumentChunk {
             int index,
             String content,
             String excerpt) {
+        this(id, documentId, packId, index, content, excerpt, null);
+    }
+
+    public DocumentChunk(
+            String id,
+            String documentId,
+            String packId,
+            int index,
+            String content,
+            String excerpt,
+            float[] embedding) {
         this.id = Objects.requireNonNull(id, "id");
         this.documentId = Objects.requireNonNull(documentId, "documentId");
         this.packId = Objects.requireNonNull(packId, "packId");
         this.index = index;
         this.content = Objects.requireNonNull(content, "content");
         this.excerpt = Objects.requireNonNull(excerpt, "excerpt");
+        this.embedding = embedding; // Can be null for backward compatibility
     }
 
     public String getId() {
@@ -48,5 +61,9 @@ public final class DocumentChunk {
 
     public String getExcerpt() {
         return excerpt;
+    }
+
+    public float[] getEmbedding() {
+        return embedding;
     }
 }

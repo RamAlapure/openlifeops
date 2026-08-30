@@ -19,6 +19,9 @@ public final class InMemoryKnowledgeService implements KnowledgeService {
     private final Map<String, KnowledgeDocument> documents = new ConcurrentHashMap<>();
     private final Map<String, List<DocumentChunk>> chunksByDocument = new ConcurrentHashMap<>();
 
+    public InMemoryKnowledgeService() {
+    }
+
     @Override
     public KnowledgeDocument ingest(IngestDocumentCommand command) {
         String documentId = UUID.randomUUID().toString();
@@ -64,7 +67,10 @@ public final class InMemoryKnowledgeService implements KnowledgeService {
     public List<KnowledgeHit> allChunks(String packId) {
         return chunksByDocument.entrySet().stream()
                 .flatMap(entry -> entry.getValue().stream()
-                        .map(chunk -> new KnowledgeHit(chunk, documents.get(entry.getKey()), 1.0)))
+                        .map(chunk -> {
+                            KnowledgeDocument doc = documents.get(entry.getKey());
+                            return new KnowledgeHit(chunk, doc, 1.0);
+                        }))
                 .filter(hit -> hit.getDocument().getPackId().equals(packId))
                 .sorted(java.util.Comparator
                         .comparing((KnowledgeHit hit) -> hit.getDocument().getFileName())

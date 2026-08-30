@@ -1,6 +1,9 @@
 package com.openlifeops.api.config;
 
 import com.openlifeops.core.event.DomainEventPublisher;
+import com.openlifeops.ai.AiReviewService;
+import com.openlifeops.ai.DeterministicTaxReviewService;
+import com.openlifeops.ai.SpringAiTaxReviewService;
 import com.openlifeops.core.event.InMemoryDomainEventPublisher;
 import com.openlifeops.core.pack.OpenLifeOpsPack;
 import com.openlifeops.evidence.EvidenceStore;
@@ -37,6 +40,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Primary;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +121,12 @@ public class InMemoryPersistenceConfig {
     @Bean
     KnowledgeService knowledgeService() {
         return new InMemoryKnowledgeService();
+    }
+
+    @Bean
+    AiReviewService aiReviewService(ObjectProvider<ChatClient.Builder> chatClientBuilder) {
+        ChatClient.Builder builder = chatClientBuilder.getIfAvailable();
+        return builder == null ? new DeterministicTaxReviewService() : new SpringAiTaxReviewService(builder);
     }
 
     @Bean

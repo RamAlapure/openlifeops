@@ -68,8 +68,11 @@ List discovered MCP tools: `GET /api/v1/tools`. Task observations use MCP JSON p
 - `openlifeops-api` — Spring Boot REST API
 
 See [PHASE-2-RUNTIME.md](PHASE-2-RUNTIME.md) for Phase 2 architecture. Phase 3 MCP: [PHASE-3-MCP.md](PHASE-3-MCP.md).
-Phase 4 knowledge and cited evidence: [PHASE-4-KNOWLEDGE.md](PHASE-4-KNOWLEDGE.md).
+Phase 4 knowledge and cited evidence with vector embeddings: [PHASE-4-KNOWLEDGE.md](PHASE-4-KNOWLEDGE.md).
 Phase 6 deterministic Tax reconciliation: [PHASE-6-TAX-RECONCILIATION.md](PHASE-6-TAX-RECONCILIATION.md).
 Phase 7 PDF/text document ingestion: [PHASE-7-DOCUMENT-INGESTION.md](PHASE-7-DOCUMENT-INGESTION.md).
+Phase 8 optional Spring AI review: [PHASE-8-AI-REVIEW.md](PHASE-8-AI-REVIEW.md).
 
 **Manual testing:** [help.md](help.md)
+
+The optional AI review endpoint uses the deterministic fallback unless a Spring AI `ChatClient.Builder` is available from a configured model provider.
